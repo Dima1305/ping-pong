@@ -24,12 +24,18 @@ class Game_sprite(sprite.Sprite):
 
 
 class Player(Game_sprite):
+    def __init__(self, down, up, *args):
+        super().__init__(*args)
+        self.down = down
+        self.up = up
+
     def update(self):
         pressed_b = key.get_pressed()
-        if pressed_b[K_RIGHT] and self.rect.x < 635:
-            self.rect.x += self.speed
-        if pressed_b[K_LEFT] and self.rect.x > 0:
-            self.rect.x -= self.speed
+        if pressed_b[self.down] and self.rect.y < 400:
+            self.rect.y += self.speed
+        if pressed_b[self.up] and self.rect.y > 0:
+            self.rect.y -= self.speed
+
 
 class Enemy(Game_sprite):
     def update(self):
@@ -46,6 +52,9 @@ font.init()
 font_1 = font.Font(None, 25)
 wintext = font_1.render('YOU WIN!', True, (255, 255, 0))
 
+right_rocket = Player(K_DOWN, K_UP, 'racket.png', 660, 200, 3, 20, 100)
+left_rocket = Player(K_s, K_w, 'racket.png', 20, 200, 3, 20, 100)
+
 game = True
 final = False
 
@@ -56,6 +65,10 @@ while game:
 
     if final != True:
         main.blit(background, (0, 0))
+        right_rocket.update()
+        right_rocket.draw()
+        left_rocket.update()
+        left_rocket.draw()
 
 
     display.update()
