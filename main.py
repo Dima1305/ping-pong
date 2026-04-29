@@ -37,20 +37,28 @@ class Player(Game_sprite):
             self.rect.y -= self.speed
 
 
-class Enemy(Game_sprite):
+class Ball(Game_sprite):
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.speed_x = self.speed
+        self.speed_y = self.speed
+
     def update(self):
-        self.rect.y += self.speed
-        if self.rect.y >= 500:
-            self.rect.x = randint(0, 625)
-            self.rect.y = -50
-            global miss_score
-            miss_score += 1
+        self.rect.y += self.speed_y
+        self.rect.x += self.speed_x
+        if self.rect.y >= 450 or self.rect.y <= 0:
+            self.speed_y *= -1
+        if sprite.collide_rect(self, right_rocket) or sprite.collide_rect(self, left_rocket):
+            self.speed_x *= -1
 
 
 
 font.init()
-font_1 = font.Font(None, 25)
-wintext = font_1.render('YOU WIN!', True, (255, 255, 0))
+font_1 = font.Font(None, 50)
+wintext_1 = font_1.render('PLAYER 1 WIN!', True, (255, 255, 0))
+winrect = wintext_1.get_rect()
+wintext_2 = font_1.render('PLAYER 2 WIN!', True, (255, 255, 0))
+ball = Ball('tenis_ball.png', 325, 225, 3, 50, 50)
 
 right_rocket = Player(K_DOWN, K_UP, 'racket.png', 660, 200, 3, 20, 100)
 left_rocket = Player(K_s, K_w, 'racket.png', 20, 200, 3, 20, 100)
@@ -62,6 +70,7 @@ while game:
     for e in event.get():
         if e.type == QUIT:
             game = False
+    
 
     if final != True:
         main.blit(background, (0, 0))
@@ -69,6 +78,15 @@ while game:
         right_rocket.draw()
         left_rocket.update()
         left_rocket.draw()
+        ball.update()
+        ball.draw()
+        if ball.rect.x <= 0:
+            final = True
+            main.blit(wintext_2, (350-winrect.width/2, 250-winrect.height/2))
+        elif ball.rect.x >= 650:
+            final = True
+            main.blit(wintext_1, (350-winrect.width/2, 250-winrect.height/2))
+
 
 
     display.update()
